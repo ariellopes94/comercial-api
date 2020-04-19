@@ -1,7 +1,7 @@
 import { Oportunidade } from './../model/Oportunidade';
 import { OportunidadesService } from './../service/oportunidades.service';
 import { Component, OnInit } from '@angular/core';
-import { empty } from 'rxjs';
+import { MessageService} from 'primeng/api';
 
 
 
@@ -17,7 +17,8 @@ export class PainelNegociacaoComponent implements OnInit {
   oportunidades = [];
 
   oportunidade = new Oportunidade();
-  constructor(private oportunidadesService: OportunidadesService) {
+  constructor(private oportunidadesService: OportunidadesService,
+              private messageService: MessageService ) {
 
 
   }
@@ -38,6 +39,25 @@ export class PainelNegociacaoComponent implements OnInit {
          subscribe(() => {
            this.oportunidade = new Oportunidade();
            this.consultar();
-         });
+
+           this.messageService.add({
+             severity: 'success',
+             summary: 'Oportunidade adicionada com sucesso'
+           });
+         },
+         resposta => {
+
+          let msg = 'Erro inesperado. Tente novamenta';
+
+          if(resposta.error.message){
+            msg = resposta.error.message
+          }
+
+          this.messageService.add({
+            severity: 'error',
+            summary: msg
+          });
+         }
+         );
   }
 }
